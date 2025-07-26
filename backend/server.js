@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import chatRoutes from "./routes/chat.js"
 
-import { getChatCompletion } from './utils/openAi.js'; // Import your utility
+import  getChatCompletion  from './utils/openAi.js'; // Import your utility
 
 dotenv.config();
 
