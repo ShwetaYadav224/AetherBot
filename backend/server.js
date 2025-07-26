@@ -1,7 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import fetch from 'node-fetch';
+import mongoose from 'mongoose';
+import chatRoutes from "./routes/chat.js"
+
+import { getChatCompletion } from './utils/openAi.js'; // Import your utility
 
 dotenv.config();
 
@@ -10,7 +13,7 @@ const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
-
+app.use("/api",chatRoutes);
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url} | Body:`, req.body);
   next();
@@ -23,37 +26,24 @@ app.post('/api/chat', async (req, res) => {
   }
 
   try {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile', // <<--- Use a current model here
-        messages: [{ role: 'user', content: message }]
-      }),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error('Groq API error:', response.status, errorBody);
-      return res.status(502).json({ error: 'Upstream API error', details: errorBody });
-    }
-
-    const data = await response.json();
-    const reply = data?.choices?.[0]?.message?.content;
-    if (!reply) {
-      return res.status(500).json({ error: 'Malformed Groq API response', data });
-    }
-
+    const reply = await getChatCompletion(message, process.env.GROQ_API_KEY);
     res.json({ reply });
   } catch (err) {
-    console.error('Unhandled server error:', err);
-    res.status(500).json({ error: 'Internal server error', details: err.message });
+    console.error('API error:', err);
+    res.status(500).json({ error: err.message });
   }
 });
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  connectDB();
 });
+const connectDB=async()=>{
+  try{
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log("Connected with database");
+  }catch(err){  
+    console.log("failed connect with DB", err);
+  }
+
+}
