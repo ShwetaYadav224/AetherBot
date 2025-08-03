@@ -2,7 +2,7 @@ import "./Sidebar.css"
 function Sidebar(){
     return(
     <section className="sidebar">
-        <button><i class="fa-solid fa-a"    ></i>
+        <button><i className="fa-solid fa-a"    ></i>
            <span> <i className="fa-solid fa-pen-to-square"></i>
 </span>
         </button>

@@ -69,7 +69,7 @@ router.post("/chat", async (req, res) => {
   try {
     let thread = await Thread.findOne({ threadId });
     if (!thread) {
-      // Create new thread if doesn't exist
+     
       thread = new Thread({
         threadId,
         title: message,
@@ -81,7 +81,7 @@ router.post("/chat", async (req, res) => {
 
     // Get AI response
     const assistantReply = await getChatCompletion(message);
-    thread.messages.push({ role: "asistant", content: assistantReply });
+    thread.messages.push({ role: "assistant", content: assistantReply });
 
     thread.updatedAt = new Date();
     await thread.save();
