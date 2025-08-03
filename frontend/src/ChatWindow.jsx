@@ -1,14 +1,12 @@
 import "./ChatWindow.css"
 import Chat from "./Chat";
 import { MyContext } from "./MyContext";
-import { useContext, useState } from "react";
+import { useContext, useState,useEffect } from "react";
 import {ScaleLoader} from "react-spinners";
 
 function ChatWindow() {
-  const { prompt, setPrompt, reply, setReply, currThread, setCurrThread } = useContext(MyContext);
+  const { prompt, setPrompt, reply, setReply, currThread, prevChats, setPrevChats} = useContext(MyContext);
   const [loading,setLoading]=useState(false);
-
-
   const getReply = async () => {
     setLoading(true);
     const options = {
@@ -32,6 +30,9 @@ function ChatWindow() {
     }
     setLoading(false);
   };
+  useEffect(()=>{
+
+  },[reply]);
 
   return (
     <div className="chatWindow">
