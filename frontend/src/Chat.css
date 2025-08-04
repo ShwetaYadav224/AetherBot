@@ -24,6 +24,14 @@
     max-width: 500px;
     width: fit-content;
 }
+.aetherMessage{
+     background-color: #324232;
+    padding: 10px 20px;
+    border-radius: 14px;
+    margin-right: 15rem;
+    max-width: 500px;
+    width: fit-content;
+}
 
 .hljs {
     border-radius: 14px !important;
