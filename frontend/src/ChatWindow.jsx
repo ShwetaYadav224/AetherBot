@@ -60,6 +60,7 @@ function ChatWindow() {
     <div className="chatWindow">
       <div className="navbar">
         <span>
+          <i className="fa-solid fa-robot"></i>
           AetherBot <i className="fa-solid fa-chevron-down"></i>
         </span>
         <div className="userIconDiv">
@@ -69,13 +70,19 @@ function ChatWindow() {
         </div>
       </div>
 
-      <Chat />
-      <ScaleLoader color="white" loading={loading} />
+      <div className="chatContent">
+        <Chat />
+        {loading && (
+          <div className="loadingContainer">
+            <ScaleLoader color="#667eea" height={20} width={3} />
+          </div>
+        )}
+      </div>
 
       <div className="chatInput">
         <div className="inputBox">
           <input
-            placeholder="Ask anything"
+            placeholder="Ask anything..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
           />
