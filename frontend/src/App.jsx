@@ -10,12 +10,13 @@ function App() {
   const [currThread,setCurrThread]=useState(uuidv1());
   const [prevChats,setPrevChats]=useState([]);//previous chats of current threats
   const [newChats,setNewChats]=useState(true);
+   const [allThreads, setAllThreads] = useState([]);
   const providerValues={
     prompt,setPrompt,
     reply,setReply,
     currThread,setCurrThread,
     prevChats,setPrevChats,
-    newChats,setNewChats
+    newChats,setNewChats,allThreads, setAllThreads
   };
   return (
     <div className="app ">
