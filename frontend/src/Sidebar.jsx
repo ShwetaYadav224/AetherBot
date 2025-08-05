@@ -1,6 +1,22 @@
 import "./Sidebar.css"
+import {useContext, useEffect} from "react";
+import { MyContext } from "./MyContext.jsx";
 
 function Sidebar(){
+    const {allThreads, setAllThreads}=useContext(MyContext);
+    const getAllThreads=async()=>{
+        try{
+            fetch("http://localhost:5000/api/thread");
+
+        }catch(err){
+console.log(err);
+        }
+
+    };
+    useEffect(()=>{
+        getAllThreads();
+
+    },[currThreadId]);  
     return(
         <section className="sidebar">
             <div className="sidebar-header">

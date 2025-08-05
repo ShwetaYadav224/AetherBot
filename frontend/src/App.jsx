@@ -4,18 +4,21 @@ import ChatWindow from "./ChatWindow.jsx";
 import { MyContext } from "./MyContext.jsx";
 import { use, useState } from "react";
 import {v1 as uuidv1} from "uuid";
+
 function App() {
   const [prompt,setPrompt]=useState("");
   const [reply,setReply]=useState(null);
   const [currThread,setCurrThread]=useState(uuidv1);
   const [prevChats,setPrevChats]=useState([]);//previous chats of current threats
   const [newChats,setNewChats]=useState(true);
+  const [allThreads,setAllTreads]=useState([]);
   const providerValues={
     prompt,setPrompt,
     reply,setReply,
     currThread,setCurrThread,
     prevChats,setPrevChats,
-    newChats,setNewChats
+    newChats,setNewChats,
+    allThreads,setAllTreads
   };
   return (
     <div className="app ">

@@ -10,9 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "highlight.js": "^11.11.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-markdown": "^10.1.0",
     "react-spinners": "^0.17.0",
+    "rehype-highlight": "^7.0.2",
     "spinners": "^1.2.2",
     "uuid": "^11.1.0"
   },
