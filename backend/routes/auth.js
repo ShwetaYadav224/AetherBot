@@ -2,22 +2,20 @@ import express from 'express';
 import User from '../models/User.js';
 import { generateToken } from '../utils/jwt.js';
 import { authenticateToken } from '../middleware/auth.js';
+import {
+  authValidationSchemas,
+  sanitizationRules,
+  combinedValidation
+} from '../middleware/validation.js';
 
 const router = express.Router();
 
 // Signup route
-router.post('/signup', async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
-
-    // Validation
-    if (!username || !email || !password) {
-      return res.status(400).json({ error: 'All fields are required' });
-    }
-
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters' });
-    }
+router.post('/signup',
+  combinedValidation(authValidationSchemas.signup, sanitizationRules.signup),
+  async (req, res) => {
+    try {
+      const { username, email, password } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({
@@ -61,14 +59,11 @@ router.post('/signup', async (req, res) => {
 });
 
 // Login route
-router.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Validation
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
-    }
+router.post('/login',
+  combinedValidation(authValidationSchemas.login, sanitizationRules.login),
+  async (req, res) => {
+    try {
+      const { email, password } = req.body;
 
     // Find user and check password
     const user = await User.findOne({ email });

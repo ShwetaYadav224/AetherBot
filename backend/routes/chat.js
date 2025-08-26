@@ -2,6 +2,11 @@ import express from "express";
 import Thread from "../models/Thread.js";
 import getChatCompletion from "../utils/openAi.js";
 import { authenticateToken } from "../middleware/auth.js";
+import {
+  chatValidationSchemas,
+  sanitizationRules,
+  combinedValidation
+} from "../middleware/validation.js";
 
 const router = express.Router();
 
@@ -37,6 +42,12 @@ router.get("/thread", async (req, res) => {
 // Get thread messages by threadId (only for authenticated user)
 router.get("/thread/:threadId", async (req, res) => {
   const { threadId } = req.params;
+  
+  // Validate threadId parameter
+  const { error } = chatValidationSchemas.threadId.validate({ threadId });
+  if (error) {
+    return res.status(400).json({ error: 'Invalid thread ID' });
+  }
   try {
     const thread = await Thread.findOne({ threadId, userId: req.user._id });
     if (!thread) {
@@ -52,6 +63,12 @@ router.get("/thread/:threadId", async (req, res) => {
 // Delete a thread (only for authenticated user)
 router.delete("/thread/:threadId", async (req, res) => {
   const { threadId } = req.params;
+  
+  // Validate threadId parameter
+  const { error } = chatValidationSchemas.threadId.validate({ threadId });
+  if (error) {
+    return res.status(400).json({ error: 'Invalid thread ID' });
+  }
   try {
     const deletedThread = await Thread.findOneAndDelete({ threadId, userId: req.user._id });
     if (!deletedThread) {
@@ -65,11 +82,10 @@ router.delete("/thread/:threadId", async (req, res) => {
 });
 
 // MAIN CHAT ENDPOINT: Add user message, get assistant reply
-router.post("/chat", async (req, res) => {
-  const { threadId, message } = req.body;
-  if (!threadId || !message) {
-    return res.status(400).json({ error: "Missing required field" });
-  }
+router.post("/chat",
+  combinedValidation(chatValidationSchemas.chat, sanitizationRules.chat),
+  async (req, res) => {
+    const { threadId, message } = req.body;
   try {
     let thread = await Thread.findOne({ threadId, userId: req.user._id });
     if (!thread) {

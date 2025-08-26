@@ -1,15 +1,41 @@
 {
     "name": "grok-chat-backend",
     "type": "module",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "nodemon server.js",
+        "prod": "NODE_ENV=production node server.js",
+        "build": "echo 'Backend build complete - no compilation needed for Node.js'",
+        "clean": "rm -rf logs/*.log",
+        "lint": "echo 'Linting not configured'",
+        "test": "jest --config jest.config.cjs --coverage --verbose",
+        "test:watch": "jest --config jest.config.cjs --watch",
+        "test:ci": "jest --config jest.config.cjs --ci --coverage"
+    },
     "dependencies": {
         "bcryptjs": "^3.0.2",
         "cors": "^2.8.5",
         "dotenv": "^17.2.0",
         "express": "^5.1.0",
+        "express-rate-limit": "^7.4.1",
+        "express-validator": "^7.2.1",
+        "helmet": "^8.0.0",
+        "joi": "^18.0.1",
         "jsonwebtoken": "^9.0.2",
         "mongoose": "^8.16.4",
         "node-fetch": "^3.3.2",
         "nodemon": "^3.1.10",
-        "openai": "^5.10.1"
+        "openai": "^5.10.1",
+        "winston": "^3.17.0"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=8.0.0"
+    },
+    "devDependencies": {
+        "@types/jest": "^30.0.0",
+        "@types/supertest": "^6.0.3",
+        "jest": "^30.0.5",
+        "supertest": "^7.1.4"
     }
 }
