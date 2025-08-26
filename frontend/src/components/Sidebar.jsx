@@ -3,6 +3,9 @@ import { useContext, useEffect } from "react";
 import { MyContext } from "../MyContext.jsx";
 import { useAuth } from '../AuthContext';
 
+// API base URL from environment variable
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+
 function Sidebar({ isMobileOpen, onClose }) {
   const {
     allThreads,
@@ -19,7 +22,7 @@ function Sidebar({ isMobileOpen, onClose }) {
     if (!token) return;
     
     try {
-      const response = await fetch("http://localhost:5000/api/thread", {
+      const response = await fetch(`${API_BASE_URL}/thread`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -54,7 +57,7 @@ function Sidebar({ isMobileOpen, onClose }) {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/thread/${threadId}`, {
+      const response = await fetch(`${API_BASE_URL}/thread/${threadId}`, {
         method: 'DELETE',
         headers: {
           "Authorization": `Bearer ${token}`
@@ -133,7 +136,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                     // Load the thread messages
                     try {
                       console.log('Fetching messages for thread:', thread.threadId);
-                      const response = await fetch(`http://localhost:5000/api/thread/${thread.threadId}`, {
+                      const response = await fetch(`${API_BASE_URL}/thread/${thread.threadId}`, {
                         headers: {
                           "Authorization": `Bearer ${token}`
                         }

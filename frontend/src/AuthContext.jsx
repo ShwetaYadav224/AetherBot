@@ -1,5 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
+// API base URL from environment variable
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+
 const AuthContext = createContext();
 
 export const useAuth = () => {
@@ -21,7 +24,7 @@ export const AuthProvider = ({ children }) => {
       if (storedToken) {
         try {
           // Verify token and get user data
-          const response = await fetch('http://localhost:5000/api/auth/profile', {
+          const response = await fetch(`${API_BASE_URL}/auth/profile`, {
             headers: {
               'Authorization': `Bearer ${storedToken}`
             }
@@ -50,7 +53,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +78,7 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (username, email, password) => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/signup', {
+      const response = await fetch(`${API_BASE_URL}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

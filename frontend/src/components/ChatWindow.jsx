@@ -5,6 +5,9 @@ import { useContext, useState, useEffect, useRef } from "react";
 import { ScaleLoader } from "react-spinners";
 import { useAuth } from '../AuthContext';
 
+// API base URL from environment variable
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+
 function ChatWindow({ onToggleSidebar, isSidebarOpen }) {
   const {
     prompt,
@@ -41,7 +44,7 @@ function ChatWindow({ onToggleSidebar, isSidebarOpen }) {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/chat", options);
+      const response = await fetch(`${API_BASE_URL}/chat`, options);
       const res = await response.json();
       console.log(res);
       setReply(res.reply);
