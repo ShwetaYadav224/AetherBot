@@ -3,8 +3,10 @@ import { useContext, useEffect } from "react";
 import { MyContext } from "../MyContext.jsx";
 import { useAuth } from '../AuthContext';
 
-// API base URL from environment variable
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+// API base URL from environment variable - use relative path in production, absolute in development
+// In production, Cloudflare middleware will proxy /api requests to the backend
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? '' : 'http://localhost:5000/api');
 
 function Sidebar({ isMobileOpen, onClose }) {
   const {
@@ -22,7 +24,7 @@ function Sidebar({ isMobileOpen, onClose }) {
     if (!token) return;
     
     try {
-      const response = await fetch(`${API_BASE_URL}/thread`, {
+      const response = await fetch(`${API_BASE_URL}/api/thread`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -57,7 +59,7 @@ function Sidebar({ isMobileOpen, onClose }) {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/thread/${threadId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/thread/${threadId}`, {
         method: 'DELETE',
         headers: {
           "Authorization": `Bearer ${token}`
@@ -136,7 +138,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                     // Load the thread messages
                     try {
                       console.log('Fetching messages for thread:', thread.threadId);
-                      const response = await fetch(`${API_BASE_URL}/thread/${thread.threadId}`, {
+                      const response = await fetch(`${API_BASE_URL}/api/thread/${thread.threadId}`, {
                         headers: {
                           "Authorization": `Bearer ${token}`
                         }
