@@ -6,8 +6,9 @@ import { ScaleLoader } from "react-spinners";
 import { useAuth } from '../AuthContext';
 
 // API base URL from environment variable - use relative path in production, absolute in development
-// In production, Cloudflare middleware will proxy /api requests to the backend
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
+// In production, use empty string (relative paths), in development use full backend URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL !== undefined ?
+  import.meta.env.VITE_API_BASE_URL :
   (import.meta.env.PROD ? '' : 'http://localhost:5000/api');
 
 function ChatWindow({ onToggleSidebar, isSidebarOpen }) {
@@ -46,7 +47,7 @@ function ChatWindow({ onToggleSidebar, isSidebarOpen }) {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chat`, options);
+      const response = await fetch(`${API_BASE_URL}${API_BASE_URL ? '/api' : ''}/chat`, options);
       const res = await response.json();
       console.log(res);
       setReply(res.reply);
