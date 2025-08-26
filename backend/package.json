@@ -33,6 +33,7 @@
         "npm": ">=8.0.0"
     },
     "devDependencies": {
+        "@railway/cli": "^4.6.3",
         "@types/jest": "^30.0.0",
         "@types/supertest": "^6.0.3",
         "jest": "^30.0.5",
