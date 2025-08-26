@@ -79,11 +79,24 @@ The project includes:
 
 ## Troubleshooting
 
-### Common Issues:
+### Common Cloudflare Workers Issues:
 
-1. **Build fails**: Check that all dependencies are in package.json
-2. **API calls fail**: Verify `VITE_API_BASE_URL` is set correctly
-3. **Styling issues**: Ensure TailwindCSS is properly installed
+1. **Build fails on GitHub**:
+   - Check that the `functions` directory is properly configured
+   - Ensure all dependencies are installed (run `npm install` in frontend directory)
+   - Verify Node.js version compatibility
+
+2. **API proxy issues**:
+   - Check that `BACKEND_URL` environment variable is set in Cloudflare dashboard
+   - Verify your backend is running and accessible
+
+3. **CORS issues**:
+   - The middleware handles CORS by removing certain headers
+   - Ensure your backend also has proper CORS configuration
+
+4. **Function errors**:
+   - Check Cloudflare Workers logs in the dashboard
+   - Test the middleware function locally if possible
 
 ### Reinstalling Dependencies:
 
@@ -92,6 +105,20 @@ cd frontend
 rm -rf node_modules package-lock.json
 npm install
 ```
+
+### GitHub Integration Issues:
+
+If connecting GitHub to Cloudflare Pages fails:
+
+1. **Check repository permissions**: Ensure Cloudflare has access to your repo
+2. **Build configuration**:
+   - Build command: `cd frontend && npm install && npm run build`
+   - Build output directory: `frontend/dist`
+   - Root directory: `frontend`
+
+3. **Environment variables**: Set these in Cloudflare Pages dashboard:
+   - `BACKEND_URL`: Your backend API URL
+   - `NODE_VERSION`: `18` (or your preferred version)
 
 ## Post-Deployment
 

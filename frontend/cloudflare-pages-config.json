@@ -1,0 +1,29 @@
+{
+  "build": {
+    "command": "npm run build",
+    "output": "dist"
+  },
+  "deployments": [
+    {
+      "name": "production",
+      "env": {
+        "BACKEND_URL": "https://your-backend-domain.com"
+      }
+    }
+  ],
+  "functions": {
+    "directory": "functions"
+  },
+  "redirects": [
+    {
+      "source": "/api/*",
+      "destination": "/api/:splat",
+      "status": 200
+    },
+    {
+      "source": "/*",
+      "destination": "/index.html",
+      "status": 200
+    }
+  ]
+}
