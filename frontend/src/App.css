@@ -1,15 +1,74 @@
-*{
-  color: #ececec;
-  font-family: Robot,'Open Sans', 'Helvetica Neue', sans-serif;
-}
+@import './styles/variables.css';
+@import './styles/utilities.css';
 
-body{
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-
 }
-.app{
-  background-color: #212121;
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-primary);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app {
+  background-color: var(--color-background);
   display: flex;
-  
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Mobile first responsive design */
+@media (max-width: 768px) {
+  .app {
+    flex-direction: column;
+  }
+}
+
+/* Desktop layout */
+@media (min-width: 769px) {
+  .app {
+    flex-direction: row;
+  }
+}
+
+/* Global scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-gray-800);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-600);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-500);
+}
+
+/* Selection styling */
+::selection {
+  background-color: var(--color-primary-600);
+  color: white;
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }
