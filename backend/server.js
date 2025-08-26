@@ -53,7 +53,8 @@ app.use(cors({
       return callback(null, true);
     }
     
-    callback(new Error('Not allowed by CORS'));
+    // Return false to deny the request (don't throw error)
+    callback(null, false);
   },
   credentials: true,
 }));
