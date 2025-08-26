@@ -71,3 +71,15 @@ export const notFoundHandler = (req, res, next) => {
   const error = new AppError(`Route not found: ${req.originalUrl}`, 404);
   next(error);
 };
+
+// Custom validation error class
+export class ValidationError extends Error {
+  constructor(message, errors = []) {
+    super(message);
+    this.name = 'ValidationError';
+    this.errors = errors;
+    this.statusCode = 400;
+    this.isOperational = true;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}

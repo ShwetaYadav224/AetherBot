@@ -1,11 +1,5 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  throw new Error('MONGODB_URI environment variable is required');
-}
-
 const mongooseOptions = {
   maxPoolSize: 10,
   serverSelectionTimeoutMS: 5000,
@@ -18,6 +12,12 @@ let connectionAttempts = 0;
 const MAX_RETRIES = 5;
 
 export const connectDB = async () => {
+  const MONGODB_URI = process.env.MONGODB_URI;
+  
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI environment variable is required');
+  }
+
   if (isConnected) {
     console.log('Database already connected');
     return;
