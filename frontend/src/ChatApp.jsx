@@ -3,7 +3,6 @@ import ChatWindow from "./components/ChatWindow.jsx";
 import { MyContext } from "./MyContext.jsx";
 import { useState } from "react";
 import { v1 as uuidv1 } from "uuid";
-import { useAuth } from './AuthContext';
 
 function ChatApp() {
   const [prompt, setPrompt] = useState("");
@@ -13,8 +12,6 @@ function ChatApp() {
   const [newChats, setNewChats] = useState(true);
   const [allThreads, setAllThreads] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
-  const { user, logout } = useAuth();
 
   const providerValues = {
     prompt, setPrompt,

@@ -5,7 +5,6 @@ import mongoose from 'mongoose';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import chatRoutes from "./routes/chat.js";
-import authRoutes from "./routes/auth.js";
 import { connectDB } from './config/database.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './middleware/logger.js';
@@ -22,7 +21,7 @@ if (missingEnvVars.length > 0) {
 }
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5002;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Security middleware
@@ -75,7 +74,6 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(requestLogger);
 
 // Routes
-app.use("/api/auth", authRoutes);
 app.use("/api", chatRoutes);
 
 // Health check endpoint

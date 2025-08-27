@@ -3,7 +3,6 @@ import Chat from "./Chat.jsx";
 import { MyContext } from "../MyContext.jsx";
 import { useContext, useState, useEffect, useRef } from "react";
 import { ScaleLoader } from "react-spinners";
-import { useAuth } from '../AuthContext';
 
 // API base URL from environment variable - use relative path in production, absolute in development
 // In production, use empty string (relative paths), in development use full backend URL
@@ -24,8 +23,6 @@ function ChatWindow({ onToggleSidebar, isSidebarOpen }) {
   } = useContext(MyContext);
 
   const [loading, setLoading] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const { token, logout, user } = useAuth();
   const menuRef = useRef(null);
   const [showSidebar, setShowSidebar] = useState(false);
 
@@ -38,7 +35,6 @@ function ChatWindow({ onToggleSidebar, isSidebarOpen }) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({
         message: prompt,
@@ -47,7 +43,7 @@ function ChatWindow({ onToggleSidebar, isSidebarOpen }) {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}${API_BASE_URL ? '/api' : ''}/chat`, options);
+      const response = await fetch(`${API_BASE_URL}/chat`, options);
       const res = await response.json();
       console.log(res);
       setReply(res.reply);
@@ -104,34 +100,6 @@ function ChatWindow({ onToggleSidebar, isSidebarOpen }) {
           <span>
             🤖 AetherBot ▼
           </span>
-        </div>
-        <div className="userIconDiv" ref={menuRef}>
-          <span
-            className="userIcon"
-            onClick={() => {
-              console.log('User icon clicked, current showUserMenu:', showUserMenu);
-              console.log('User data:', user);
-              setShowUserMenu(!showUserMenu);
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            👤
-          </span>
-          {showUserMenu && (
-            <div className="user-menu">
-              <div className="user-info">
-                <span>{user?.username || 'No username'}</span>
-                <span className="user-email">{user?.email || 'No email'}</span>
-              </div>
-              <div className="menu-divider"></div>
-              <button onClick={() => {
-                console.log('Logout clicked');
-                logout();
-              }} className="logout-menu-item">
-                Logout
-              </button>
-            </div>
-          )}
         </div>
       </div>
 

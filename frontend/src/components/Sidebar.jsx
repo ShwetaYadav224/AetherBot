@@ -1,7 +1,6 @@
 import "./Sidebar.css";
 import { useContext, useEffect } from "react";
 import { MyContext } from "../MyContext.jsx";
-import { useAuth } from '../AuthContext';
 
 // API base URL from environment variable - use relative path in production, absolute in development
 // In production, use empty string (relative paths), in development use full backend URL
@@ -19,17 +18,10 @@ function Sidebar({ isMobileOpen, onClose }) {
     setPrevChats,
     setReply
   } = useContext(MyContext);
-  const { token } = useAuth();
 
   const getAllThreads = async () => {
-    if (!token) return;
-    
     try {
-      const response = await fetch(`${API_BASE_URL}${API_BASE_URL ? '/api' : ''}/thread`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
+      const response = await fetch(`${API_BASE_URL}/thread`);
       const res = await response.json();
       const filteredData = res.map((thread) => ({
         threadId: thread.threadId,
@@ -60,11 +52,8 @@ function Sidebar({ isMobileOpen, onClose }) {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}${API_BASE_URL ? '/api' : ''}/thread/${threadId}`, {
-        method: 'DELETE',
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
+      const response = await fetch(`${API_BASE_URL}/thread/${threadId}`, {
+        method: 'DELETE'
       });
 
       if (response.ok) {
@@ -126,7 +115,6 @@ function Sidebar({ isMobileOpen, onClose }) {
                 <span
                   onClick={async () => {
                     console.log('Loading chat thread:', thread.threadId, thread.title);
-                    console.log('Current token:', token ? 'Token exists' : 'No token');
                     setCurrThread(thread.threadId);
                     setNewChats(false);
                     setReply(null);
@@ -139,11 +127,7 @@ function Sidebar({ isMobileOpen, onClose }) {
                     // Load the thread messages
                     try {
                       console.log('Fetching messages for thread:', thread.threadId);
-                      const response = await fetch(`${API_BASE_URL}${API_BASE_URL ? '/api' : ''}/thread/${thread.threadId}`, {
-                        headers: {
-                          "Authorization": `Bearer ${token}`
-                        }
-                      });
+                      const response = await fetch(`${API_BASE_URL}/thread/${thread.threadId}`);
                       
                       console.log('Response status:', response.status);
                       
