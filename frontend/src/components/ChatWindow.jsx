@@ -54,7 +54,7 @@ const LogoutIcon = () => (
 // API base URL from environment variable
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL !== undefined ?
   import.meta.env.VITE_API_BASE_URL :
-  (import.meta.env.PROD ? '' : 'http://localhost:5002/api');
+  (import.meta.env.PROD ? '/api' : 'http://localhost:5002/api');
 
 function ChatWindow({ onToggleSidebar, isSidebarOpen }) {
   const {
