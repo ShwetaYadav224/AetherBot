@@ -6,7 +6,7 @@ import { MyContext } from "../MyContext.jsx";
 // In production, use empty string (relative paths), in development use full backend URL
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL !== undefined ?
   import.meta.env.VITE_API_BASE_URL :
-  (import.meta.env.PROD ? '' : 'http://localhost:5000/api');
+  (import.meta.env.PROD ? '' : 'http://localhost:5002/api');
 
 function Sidebar({ isMobileOpen, onClose }) {
   const {
@@ -59,7 +59,7 @@ function Sidebar({ isMobileOpen, onClose }) {
       if (response.ok) {
         // Remove the thread from the local state
         setAllThreads(prev => prev.filter(thread => thread.threadId !== threadId));
-        
+
         // If the deleted thread was the current one, start a new chat
         if (currThread === threadId) {
           handleNewChat();
@@ -107,9 +107,8 @@ function Sidebar({ isMobileOpen, onClose }) {
           {allThreads?.map((thread) => (
             <li
               key={thread.threadId} // ✅ Unique key
-              className={`history-item ${
-                currThread === thread.threadId ? "active" : ""
-              }`} // ✅ Conditionally active
+              className={`history-item ${currThread === thread.threadId ? "active" : ""
+                }`} // ✅ Conditionally active
             >
               <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                 <span
@@ -118,28 +117,28 @@ function Sidebar({ isMobileOpen, onClose }) {
                     setCurrThread(thread.threadId);
                     setNewChats(false);
                     setReply(null);
-                    
+
                     // Close sidebar on mobile after selecting a chat
                     if (onClose) {
                       onClose();
                     }
-                    
+
                     // Load the thread messages
                     try {
                       console.log('Fetching messages for thread:', thread.threadId);
                       const response = await fetch(`${API_BASE_URL}/thread/${thread.threadId}`);
-                      
+
                       console.log('Response status:', response.status);
-                      
+
                       if (!response.ok) {
                         const errorText = await response.text();
                         console.log('Error response:', errorText);
                         throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                       }
-                      
+
                       const messages = await response.json();
                       console.log('Received messages:', messages);
-                      
+
                       if (Array.isArray(messages)) {
                         // Convert thread messages to prevChats format
                         const formattedChats = messages.map(msg => ({

@@ -12,12 +12,14 @@ import cache from './utils/cache.js';
 
 dotenv.config();
 
-// Validate required environment variables
-const requiredEnvVars = ['JWT_SECRET', 'MONGODB_URI', 'GROQ_API_KEY'];
+// Validate required environment variables (MONGODB_URI is optional with memory server fallback)
+const requiredEnvVars = ['JWT_SECRET', 'GROQ_API_KEY'];
 const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
 
 if (missingEnvVars.length > 0) {
-  throw new Error(`Missing required environment variables: ${missingEnvVars.join(', ')}`);
+  console.error(`Missing environment variables: ${missingEnvVars.join(', ')}`);
+  console.error('Please check your .env file');
+  process.exit(1);
 }
 
 const app = express();
@@ -37,21 +39,21 @@ app.use(helmet({
 
 // CORS configuration
 app.use(cors({
-  origin: function(origin, callback) {
+  origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps, curl, etc.)
     if (!origin) return callback(null, true);
-    
+
     // Allow localhost origins on any port
     if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
       return callback(null, true);
     }
-    
+
     // Allow specific frontend URL from environment
     const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:5173';
     if (origin === allowedOrigin) {
       return callback(null, true);
     }
-    
+
     // Return false to deny the request (don't throw error)
     callback(null, false);
   },
@@ -114,7 +116,7 @@ app.use(errorHandler);
 // Graceful shutdown handling
 const gracefulShutdown = async (signal) => {
   console.log(`\nReceived ${signal}. Starting graceful shutdown...`);
-  
+
   try {
     await mongoose.connection.close();
     console.log('Database connection closed.');

@@ -8,7 +8,7 @@ import { ScaleLoader } from "react-spinners";
 // In production, use empty string (relative paths), in development use full backend URL
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL !== undefined ?
   import.meta.env.VITE_API_BASE_URL :
-  (import.meta.env.PROD ? '' : 'http://localhost:5000/api');
+  (import.meta.env.PROD ? '' : 'http://localhost:5002/api');
 
 function ChatWindow({ onToggleSidebar, isSidebarOpen }) {
   const {
