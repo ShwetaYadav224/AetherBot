@@ -67,6 +67,13 @@ export const chatValidationSchemas = {
         'string.min': 'Message cannot be empty',
         'string.max': 'Message cannot exceed 5000 characters',
         'any.required': 'Message is required'
+      }),
+    userEmail: Joi.string()
+      .email()
+      .required()
+      .messages({
+        'string.email': 'Please provide a valid email address',
+        'any.required': 'Email is required'
       })
   }),
 
@@ -124,7 +131,12 @@ export const sanitizationRules = {
       .trim()
       .escape()
       .isLength({ min: 1, max: 5000 })
-      .withMessage('Message must be between 1-5000 characters')
+      .withMessage('Message must be between 1-5000 characters'),
+    body('userEmail')
+      .trim()
+      .normalizeEmail()
+      .isEmail()
+      .withMessage('Please provide a valid email address')
   ]
 };
 
@@ -132,16 +144,16 @@ export const sanitizationRules = {
 export const validate = (schema) => {
   return (req, res, next) => {
     const { error } = schema.validate(req.body, { abortEarly: false });
-    
+
     if (error) {
       const errors = error.details.map(detail => ({
         field: detail.path.join('.'),
         message: detail.message
       }));
-      
+
       throw new ValidationError('Validation failed', errors);
     }
-    
+
     next();
   };
 };
@@ -157,7 +169,7 @@ export const validateWithExpressValidator = (rules) => {
           field: error.path,
           message: error.msg
         }));
-        
+
         throw new ValidationError('Validation failed', formattedErrors);
       }
       next();

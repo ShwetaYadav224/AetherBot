@@ -1,9 +1,56 @@
 import "./Sidebar.css";
 import { useContext, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { MyContext } from "../MyContext.jsx";
 
-// API base URL from environment variable - use relative path in production, absolute in development
-// In production, use empty string (relative paths), in development use full backend URL
+// SVG Icons as components
+const PlusIcon = () => (
+  <svg className="btn-icon" viewBox="0 0 24 24">
+    <line x1="12" y1="5" x2="12" y2="19"></line>
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+  </svg>
+);
+
+const EditIcon = () => (
+  <svg className="btn-icon" viewBox="0 0 24 24">
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+  </svg>
+);
+
+const MessageIcon = () => (
+  <svg className="chat-icon" viewBox="0 0 24 24">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+  </svg>
+);
+
+const TrashIcon = () => (
+  <svg viewBox="0 0 24 24">
+    <polyline points="3 6 5 6 21 6"></polyline>
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+    <line x1="10" y1="11" x2="10" y2="17"></line>
+    <line x1="14" y1="11" x2="14" y2="17"></line>
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg viewBox="0 0 24 24">
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
+);
+
+const BotIcon = () => (
+  <svg className="brand-icon" viewBox="0 0 24 24">
+    <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+    <circle cx="12" cy="5" r="2"></circle>
+    <path d="M12 7v4"></path>
+    <line x1="8" y1="16" x2="8" y2="16"></line>
+    <line x1="16" y1="16" x2="16" y2="16"></line>
+  </svg>
+);
+
+// API base URL from environment variable
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL !== undefined ?
   import.meta.env.VITE_API_BASE_URL :
   (import.meta.env.PROD ? '' : 'http://localhost:5002/api');
@@ -20,15 +67,17 @@ function Sidebar({ isMobileOpen, onClose }) {
   } = useContext(MyContext);
 
   const getAllThreads = async () => {
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) return;
+
     try {
-      const response = await fetch(`${API_BASE_URL}/thread`);
+      const response = await fetch(`${API_BASE_URL}/thread?userEmail=${encodeURIComponent(userEmail)}`);
       const res = await response.json();
       const filteredData = res.map((thread) => ({
         threadId: thread.threadId,
         title: thread.title,
       }));
       setAllThreads(filteredData);
-      console.log(filteredData);
     } catch (err) {
       console.log("Error fetching threads:", err);
     }
@@ -46,21 +95,21 @@ function Sidebar({ isMobileOpen, onClose }) {
   };
 
   const deleteThread = async (threadId, e) => {
-    e.stopPropagation(); // Prevent triggering the chat load
+    e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this chat?')) {
       return;
     }
 
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) return;
+
     try {
-      const response = await fetch(`${API_BASE_URL}/thread/${threadId}`, {
+      const response = await fetch(`${API_BASE_URL}/thread/${threadId}?userEmail=${encodeURIComponent(userEmail)}`, {
         method: 'DELETE'
       });
 
       if (response.ok) {
-        // Remove the thread from the local state
         setAllThreads(prev => prev.filter(thread => thread.threadId !== threadId));
-
-        // If the deleted thread was the current one, start a new chat
         if (currThread === threadId) {
           handleNewChat();
         }
@@ -72,32 +121,58 @@ function Sidebar({ isMobileOpen, onClose }) {
     }
   };
 
+  const loadThread = async (thread) => {
+    setCurrThread(thread.threadId);
+    setNewChats(false);
+    setReply(null);
+
+    if (onClose) {
+      onClose();
+    }
+
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/thread/${thread.threadId}?userEmail=${encodeURIComponent(userEmail)}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const messages = await response.json();
+
+      if (Array.isArray(messages)) {
+        const formattedChats = messages.map(msg => ({
+          role: msg.role,
+          content: msg.content
+        }));
+        setPrevChats(formattedChats);
+      } else {
+        setPrevChats([]);
+      }
+    } catch (err) {
+      console.log("Error loading thread:", err);
+      setPrevChats([]);
+    }
+  };
+
   return (
     <section className={`sidebar ${isMobileOpen ? 'mobile-open' : ''}`}>
       <div className="sidebar-header">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           <button className="new-chat-btn" onClick={handleNewChat}>
             <div className="btn-content">
-              ➕
+              <PlusIcon />
               <span>New Chat</span>
             </div>
-            ✏️
+            <EditIcon />
           </button>
           <button
             className="mobile-close-btn"
             onClick={() => onClose && onClose()}
-            style={{
-              display: 'none',
-              background: 'none',
-              border: 'none',
-              color: '#e0e0e0',
-              cursor: 'pointer',
-              fontSize: '1.2rem',
-              padding: '0.5rem',
-              marginLeft: '0.5rem'
-            }}
           >
-            ✕
+            <CloseIcon />
           </button>
         </div>
       </div>
@@ -106,84 +181,23 @@ function Sidebar({ isMobileOpen, onClose }) {
         <ul className="history">
           {allThreads?.map((thread) => (
             <li
-              key={thread.threadId} // ✅ Unique key
-              className={`history-item ${currThread === thread.threadId ? "active" : ""
-                }`} // ✅ Conditionally active
+              key={thread.threadId}
+              className={`history-item ${currThread === thread.threadId ? "active" : ""}`}
             >
               <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                 <span
-                  onClick={async () => {
-                    console.log('Loading chat thread:', thread.threadId, thread.title);
-                    setCurrThread(thread.threadId);
-                    setNewChats(false);
-                    setReply(null);
-
-                    // Close sidebar on mobile after selecting a chat
-                    if (onClose) {
-                      onClose();
-                    }
-
-                    // Load the thread messages
-                    try {
-                      console.log('Fetching messages for thread:', thread.threadId);
-                      const response = await fetch(`${API_BASE_URL}/thread/${thread.threadId}`);
-
-                      console.log('Response status:', response.status);
-
-                      if (!response.ok) {
-                        const errorText = await response.text();
-                        console.log('Error response:', errorText);
-                        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-                      }
-
-                      const messages = await response.json();
-                      console.log('Received messages:', messages);
-
-                      if (Array.isArray(messages)) {
-                        // Convert thread messages to prevChats format
-                        const formattedChats = messages.map(msg => ({
-                          role: msg.role,
-                          content: msg.content
-                        }));
-                        console.log('Setting previous chats:', formattedChats.length, 'messages');
-                        setPrevChats(formattedChats);
-                      } else {
-                        console.log('Response is not an array:', messages);
-                        setPrevChats([]);
-                      }
-                    } catch (err) {
-                      console.log("Error loading thread:", err);
-                      alert('Failed to load chat. Please try again. Check console for details.');
-                      setPrevChats([]);
-                    }
-                  }}
-                  style={{ cursor: 'pointer', flex: 1, display: 'flex', alignItems: 'center' }}
+                  onClick={() => loadThread(thread)}
+                  style={{ cursor: 'pointer', flex: 1, display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
-                  💬
-                  <span style={{ marginLeft: '8px' }}>{thread.title}</span>
+                  <MessageIcon />
+                  <span>{thread.title}</span>
                 </span>
                 <button
+                  className="delete-btn"
                   onClick={(e) => deleteThread(thread.threadId, e)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#888',
-                    cursor: 'pointer',
-                    padding: '4px',
-                    borderRadius: '4px',
-                    fontSize: '12px'
-                  }}
-                  onMouseOver={(e) => {
-                    e.target.style.color = '#ff4444';
-                    e.target.style.background = 'rgba(255, 68, 68, 0.1)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.color = '#888';
-                    e.target.style.background = 'none';
-                  }}
                   title="Delete chat"
                 >
-                  🗑️
+                  <TrashIcon />
                 </button>
               </div>
             </li>
@@ -192,12 +206,12 @@ function Sidebar({ isMobileOpen, onClose }) {
       </div>
 
       <div className="sidebar-footer">
-        <div className="sign">
-          🤖
-          <p>
-            AetherBot <span className="heart">&hearts;</span>
-          </p>
-        </div>
+        <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className="brand" style={{ cursor: 'pointer' }}>
+            <BotIcon />
+            <p>AetherBot</p>
+          </div>
+        </Link>
       </div>
     </section>
   );
