@@ -1,6 +1,10 @@
 # AetherBot
 
 A professional AI chat application with a modern, user-friendly interface.
+## view
+<img width="1397" height="811" alt="image" src="https://github.com/user-attachments/assets/ab9df858-b127-4167-83b0-5dbb412cb135" />
+<img width="1902" height="892" alt="image" src="https://github.com/user-attachments/assets/5953eb4d-54c7-4ca1-a6a2-55fa89b18b3b" />
+
 
 ## 🚀 Getting Started
 
@@ -100,4 +104,6 @@ Follow these instructions to set up and run the project locally.
 *   **Modern UI:** Professional off-white theme with a dotted background pattern.
 *   **User Isolation:** Chat history is private and secured for each specific user.
 *   **Authentication:** Secure Login and Signup functionality.
-*   **Responsive Design:** Fully functional on desktop and mobile devices.
+*   **Responsive Design:** Fully functional on desktop and mobile devices
+
+
