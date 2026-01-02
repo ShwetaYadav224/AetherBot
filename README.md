@@ -3,7 +3,9 @@
 A professional AI chat application with a modern, user-friendly interface.
 ## view
 <img width="1397" height="811" alt="image" src="https://github.com/user-attachments/assets/ab9df858-b127-4167-83b0-5dbb412cb135" />
-<img width="1902" height="892" alt="image" src="https://github.com/user-attachments/assets/5953eb4d-54c7-4ca1-a6a2-55fa89b18b3b" />
+
+
+<img width="1919" height="951" alt="image" src="https://github.com/user-attachments/assets/422d47bc-52a8-47d4-bdf0-814388a713d6" />
 
 
 ## 🚀 Getting Started
